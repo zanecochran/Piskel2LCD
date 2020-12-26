@@ -101,7 +101,6 @@ public void convert(){
       if (rawByte.length() > 8){
         String byteMask = rawByte.substring(0, 2);
         String byteColorRev = rawByte.substring(2, 8);
-        //String byteColor = new StringBuilder(byteColorRev).reverse().toString().toUpperCase();
         
         // Convert Mask Info to Binary and Write to Mask File
         maskByte = maskByte << 1;
@@ -140,13 +139,14 @@ public void convert(){
 
 
 public String downgradeColor(String c){
-  int rawC = unhex(c);
-  int finalC = 0;
+  String rawRC = c;
+  String rawGC = c;
+  String rawBC = c;
   
-  String r = new StringBuilder(c.substring(0, 2)).reverse().toString().toUpperCase();
-  String g = new StringBuilder(c.substring(2, 4)).reverse().toString().toUpperCase();
-  String b = new StringBuilder(c.substring(4, 6)).reverse().toString().toUpperCase();
-  
+  String r = new StringBuilder(rawRC.substring(4, 6)).toString().toUpperCase();
+  String g = new StringBuilder(rawGC.substring(2, 4)).toString().toUpperCase();
+  String b = new StringBuilder(rawBC.substring(0, 2)).toString().toUpperCase();
+    
   int rRaw = unhex(r);
   int newR = (int)map(rRaw, 0, 255, 0, 31);
   String rawR = binary(newR);

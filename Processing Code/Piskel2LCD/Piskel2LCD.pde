@@ -50,12 +50,16 @@ void convert(){
   fHeight = Integer.parseInt(splitFrameHeight[2]);
   
   int framePix = fWidth * fHeight;
-  int frameMask = (fWidth * fHeight) / 8;
+  int frameMask = ceil((fWidth * fHeight) / 8.0);
   
-  // Write File Headers
-  pix.println("const unsigned short " + fName + "_PIX[" + fCount + "][" + framePix + "] PROGMEM={");  
+  // Write File Headers & DEFINE Variables
+  pix.println("#define " + fName + "_COUNT " + fCount);  
+  pix.println("#define " + fName + "_W " + fWidth);  
+  pix.println("#define " + fName + "_H " + fHeight);  
+
+   pix.println("const unsigned short " + fName + "_PIX[" + fCount + "][" + framePix + "] PROGMEM={");  
   mask.println("const uint8_t " + fName + "_MASK[" + fCount + "][" + frameMask + "] PROGMEM={");  
- 
+
   // Recombine Split File Info into One Large String
   String rawFile = "";
   for (int i = 0 ; i < lines.length; i++){rawFile = rawFile + lines[i];}
@@ -98,8 +102,16 @@ void convert(){
         
         // Convert Color Info to Binary and Write to Pix File
         pix.print(downgradeColor(byteColor) + ", ");
-      }      
+      }
     }
+    
+    // If there are fewer than 8 bits in last pixel array, fill last byte with 1's to complete
+    if(maskBitCounter != 0){
+      for (int k = 0; k < (8 - maskBitCounter); k++){maskByte = maskByte << 1; maskByte++;}
+      mask.print(maskByte + ", ");
+    }
+    
+    // Close Arrays
     mask.println("},");
     pix.println("},");
   }
